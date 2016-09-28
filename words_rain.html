@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas demo - 数字雨</title>
+
+<style>
+body { background-color: #000; }
+</style>
+
+</head>
+
+<body>
+    
+<canvas id="myCanvas">
+    <p>Your browser not support!!!</p>
+</canvas>
+
+
+<script>
+'use strict';
+
+window.onload = function() {
+    // Your codes...
+
+    /*
+     * 初始化参数:
+     */
+    let _WORDS        = "0123456789qwertyuiopasdfghjklzxcvbnm,./;'\[]QWERTYUIOP{}ASDFGHJHJKL:ZXCVBBNM<>?", 
+        _FONT_SIZE    = 12,                  // 字体大小
+        _FONT_STYLE   = 'Arial',             // 字体样式
+        _CLEAR_COLOR  = 'rgba(0, 0, 0, .1)', // 用于绘制渐变阴影
+        _FONT_COLOR   = '#3f3',              // 文字颜色
+        _RANDOM_LIMIT = .951                // 
+    ;
+    var myCanvas = document.getElementById('myCanvas'), // Get DOM element.
+        content  = myCanvas.getContext('2d'),           // 绘图环境 (指定: 2D)
+        wordsArr = _WORDS.split(''),                    // 将文字拆分成数组
+        w,
+        h,
+        drops    = []
+    ;
+    w = myCanvas.width  = window.innerWidth;
+    h = myCanvas.height = window.innerHeight;
+
+    var columns = w / _FONT_SIZE; // 文字降落的列数
+
+    for (var i = 0; i < columns; i++) {
+        drops[i] = 1;
+    }
+
+
+    var rainWords = function() {
+        content.save(); // 保存当前环境的状态
+
+        content.font = _FONT_SIZE+'px '+_FONT_STYLE; //设置字体大小和字体
+        content.fillStyle = _FONT_COLOR;
+
+        /*
+         * Core logic.
+         */
+        for (var i = 0, len = drops.length; i < len; i++) {
+            var random = Math.floor(Math.random() * wordsArr.length),
+                txt    = wordsArr[random],
+                txt_X  = i * _FONT_SIZE,
+                txt_Y  = drops[i] * _FONT_SIZE
+            ;
+            content.fillText(txt, txt_X, txt_Y); // 绘制
+
+            if (drops[i] * _FONT_SIZE > h && Math.random() > _RANDOM_LIMIT) {
+                drops[i] = 0;
+            }
+            drops[i]++;
+        }
+
+        /*
+         * 返回之前保存过的路径状态和属性
+         */
+        content.restore();
+    };
+
+    var resize = function() {
+        w = myCanvas.width  = window.innerWidth;
+        h = myCanvas.height = window.innerHeight;
+    };
+    myCanvas.addEventListener('resize', resize);
+
+    /*
+     * 启动绘制...
+     */
+     var animationId;
+     (function draw() {
+        animationId = window.requestAnimationFrame(draw, myCanvas);
+
+        content.fillStyle = _CLEAR_COLOR;
+        content.fillRect(0, 0, w, h);
+
+        rainWords();
+     }());
+};
+</script>
+
+</body>
+
+</html>

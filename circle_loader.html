@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas demo - 绘制百分比加载动画</title>
+
+<style>
+body { background-color: #000; }
+</style>
+
+</head>
+
+<body>
+
+<h3>绘制百分比加载动画</h3>
+    
+<canvas id="myCanvas" width="240" height="240">
+    <p>Your browser not support!!!</p>
+</canvas>
+
+
+<script>
+'use strict';
+
+window.onload = function() {
+    // Your codes...
+
+    /*
+     * 初始化参数:
+     */
+    let _PI    = Math.PI, // 自定义PI常量
+        _TOTAL = 100,      // 将圆分割多少份
+        _R     = 100     // 绘制圆形的半径
+    ;
+    var myCanvas = document.getElementById('myCanvas'), // Get DOM element.
+        content  = myCanvas.getContext('2d'),           // 绘图环境 (指定: 2D)
+        contentX = myCanvas.width / 2,                  // X轴中点
+        contentY = myCanvas.height / 2,                 // Y轴中点
+        rad      = 2 * _PI / _TOTAL,                    // 将圆形等分多少份, 100份
+        speed    = .1                                   // 加载速度
+    ;
+
+
+    /*
+     * 绘制外圈
+     */
+    var outCircle = function() {
+        content.save(); // 保存当前环境的状态
+
+        content.strokeStyle = '#fff'; // 边线颜色
+        content.lineWidth   = 1;      // 边线线宽
+        /*
+         * 开始绘制
+         */
+        content.beginPath();
+        content.arc(contentX, contentY, _R, 0, 2 * _PI, false); // 绘制圆形外圈 arc(起始X坐标, 起始Y坐标, 半径, 起始角度, 终止角度, 顺/逆时针)
+        content.stroke();    // 绘制
+        content.closePath(); // 结束绘制
+
+        /*
+         * 返回之前保存过的路径状态和属性
+         */
+        content.restore();
+    };
+
+    /*
+     * 绘制圆弧
+     */
+    var drawOutRadius = function(n) {
+        content.save(); // 保存当前环境的状态
+
+        content.strokeStyle = '#49f'; // 边线颜色
+        content.lineWidth   = 5;      // 边线线宽
+        /*
+         * 计算绘画的 起始角度, 终止角度
+         */
+        var startRadius = 3/2 * _PI;
+        var endRadius   = startRadius + (n * rad);
+        /*
+         * 开始绘制
+         */
+        content.beginPath();
+        content.arc(contentX, contentY, _R, startRadius, endRadius, false); // 绘制圆形外圈 arc(起始X坐标, 起始Y坐标, 半径, 起始角度, 终止角度, 顺/逆时针)
+        content.stroke();    // 绘制
+        content.closePath(); // 结束绘制
+
+        /*
+         * 返回之前保存过的路径状态和属性
+         */
+        content.restore();
+    };
+
+    /*
+     * 绘制文字, 显示进度读数
+     */
+    var text = function(n) {
+        content.save(); // 保存当前环境的状态
+
+        var txt   = n.toFixed(0) + '%',
+            txt_X = contentX - ((n < 100) ? 25 : 45), 
+            txt_Y = contentY + 15
+        ;
+
+        content.font = '40px Arial'; //设置字体大小和字体
+
+        // content.strokeStyle = '#49f'; // 颜色
+        // content.strokeText(txt, contentX, contentY);    // 绘制
+        content.fillStyle = '#49f';
+        content.fillText(txt, txt_X, txt_Y);    // 绘制
+        // content.stroke(); //执行绘制
+        /*
+         * 返回之前保存过的路径状态和属性
+         */
+        content.restore();
+    };
+
+
+    /*
+     * 启动绘制...
+     */
+    // var per = 100;
+    // outCircle(); // 绘制外圈
+    // text(per);
+    // drawOutRadius(per);
+
+    var animationId,
+        per = 0
+    ;
+    (function draw() {
+        animationId = window.requestAnimationFrame(draw, myCanvas);
+
+        content.clearRect(0, 0, myCanvas.width, myCanvas.height); // 在给定的矩形内清除指定的像素
+
+        outCircle();          // 绘制外圈
+        text(per);          // 绘制文本
+        drawOutRadius(per); // 绘制圆弧(进度)
+
+        if (per < _TOTAL) {
+            per += speed;
+            console.log(per + '/'+ _TOTAL);
+        }
+        else {
+            //per = 0;
+            window.cancelAnimationFrame(animationId); // 加载完毕后跳出循环.
+            console.log('>>>>> Load finished! =====');
+        }
+    }());
+
+};
+</script>
+
+</body>
+
+</html>
