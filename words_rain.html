@@ -32,7 +32,7 @@ window.onload = function() {
         _FONT_STYLE   = 'Arial',             // 字体样式
         _CLEAR_COLOR  = 'rgba(0, 0, 0, .1)', // 用于绘制渐变阴影
         _FONT_COLOR   = '#3f3',              // 文字颜色
-        _RANDOM_LIMIT = .951                // 
+        _RANDOM_LIMIT = .98                  // 
     ;
     var myCanvas = document.getElementById('myCanvas'), // Get DOM element.
         content  = myCanvas.getContext('2d'),           // 绘图环境 (指定: 2D)
@@ -44,9 +44,8 @@ window.onload = function() {
     w = myCanvas.width  = window.innerWidth;
     h = myCanvas.height = window.innerHeight;
 
-    var columns = w / _FONT_SIZE; // 文字降落的列数
-
-    for (var i = 0; i < columns; i++) {
+    // 初始化文字降落的列数
+    for (var i = 0, cols = w / _FONT_SIZE; i < cols; i++) {
         drops[i] = 1;
     }
 
